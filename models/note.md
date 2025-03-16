@@ -1,0 +1,1 @@
+Run `python src/train.py` to generate a `.pkl` file in this directory.

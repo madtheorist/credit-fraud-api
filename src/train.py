@@ -1,4 +1,4 @@
-# run this script to generate rf_model_final.pkl file in the /models directory
+# run this script to generate rf_model_final.pkl and preprocessor.pkl file in the /models directory
 # this trains a random forest model on the full fraudTrain.csv dataset
 # there is a separate test set available on Kaggle
 
@@ -9,12 +9,13 @@ import time
 from typing import Tuple
 from pipeline import Preprocessor
 from sklearn.ensemble import RandomForestClassifier
+from scipy.sparse import csr_matrix
 from imblearn.over_sampling import SMOTE
 from utils import create_timestamp_columns
 
 
 
-def preprocess(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
+def preprocess(df: pd.DataFrame) -> Tuple[csr_matrix, pd.Series]:
     """
     Preprocesses the raw data by transforming features and extracting the target variable.
 
@@ -25,8 +26,8 @@ def preprocess(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
 
     Returns
     -------
-    X : pd.DataFrame
-        The preprocessed feature matrix with transformed features.
+    X : scipy.sparse.csr_matrix
+        The preprocessed feature matrix with transformed features, represented as a sparse matrix.
     y : pd.Series
         The target labels indicating fraud (1) or non-fraud (0).
     """
@@ -41,6 +42,9 @@ def preprocess(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Series]:
     # feature scaling and imputation
     preprocessor = Preprocessor(X)
     X = preprocessor.fit_transform()
+    preprocessor_path = os.path.join("models", "preprocessor.pkl")
+    joblib.dump(preprocessor, preprocessor_path)
+    print(f"Preprocessor saved in {preprocessor_path}")
 
     # Oversample minority class using SMOTE
     smote = SMOTE(sampling_strategy="auto", random_state=42)
@@ -60,10 +64,10 @@ if __name__ == "__main__":
     start = time.time()
     n_estimators, max_depth = 50, 5
     print(f"Training random forest classifier with {n_estimators=} and {max_depth=}")
-    clf = RandomForestClassifier(n_estimators=50, max_depth=5, n_jobs=-1)
+    clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, n_jobs=-1)
     clf.fit(X, y)
     print(f'Finished training classifier in {time.time() - start:.2f} seconds')
 
     filename = "rf_model_final.pkl"
     joblib.dump(clf, f"models/{filename}")
-    print("Model saved!")
+    print(f"Model saved in models/{filename}")

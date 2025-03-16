@@ -20,9 +20,9 @@ pip install -r requirements.txt
 ```
 You may also wish to install the development requirements `requirements_dev.txt` to run unit tests.
 
-2. Download the above training dataset and place it in the `\data` folder. Make sure it is named `fraudTrain.csv`.
+2. Download the above training dataset and place it in the `/data` folder. Make sure it is named `fraudTrain.csv`.
 
-3. Run the following command to train a random forest model with the default tuned hyperparameters. This should generate a file `rf_model_final.pkl` in `\models`.
+3. Run the following command to train a random forest model with the default tuned hyperparameters. This should generate a file `rf_model_final.pkl` in `/models`.
 
 ```
 python src/train.py

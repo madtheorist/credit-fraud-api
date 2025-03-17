@@ -1,15 +1,18 @@
 # Credit fraud detection mini-project
 
-This is a small personal project centred around building a simple, scalable machine learning model to predict occurrences of credit card fraud.
+This is a small personal project centred around building a simple, scalable machine learning model to predict occurrences of credit card fraud. I created a simple API endpoint using FastAPI to serve the model predictions.
 
 The training dataset can be found on Kaggle here: https://www.kaggle.com/datasets/kartik2112/fraud-detection?select=fraudTrain.csv. It's based on a simulated transaction data, so the data isn't confidential.
 
+This is a **work in progress**. Currently, a baseline random forest model with sensible default hyperparameters is available. I haven't done extensive hyperparameter tuning yet.
 
-# Local setup
 
-## Model training
+## Setup
 
-To train the model locally, follow the following steps:
+
+### Option #1: Train the model locally
+
+To train and use the model locally, follow the following steps:
 
 1. Create a virtual environment and install dependencies. On Linux-based machines, the standard commands are as follows:
 
@@ -27,9 +30,33 @@ You may also wish to install the development requirements `requirements_dev.txt`
 ```
 python src/train.py
 ```
-4. Making a prediction. I created simple API using FastAPI that serves predictions given 
 
-## Unit tests
+4. To start the server run
+
+```
+python main.py
+```
+
+5. In a separate terminal window you can now send a post request to the API with input data in the following format:
+
+```
+curl -X POST "http://127.0.0.1:8000/predict" -H "Content-Type: application/json" -d '[{"amt": 250.5, "hour": 15, "time_since_last_minutes": 120, "category": "shopping_net"}, {"amt": 1000, "hour": 23, "time_since_last_minutes": 60, "category": "shopping_net"}]'
+```
+
+This should give the following response:
+
+```
+{"predictions":[0,1]}
+```
+indicating that the first data point is likely to be a normal transaction, but the second data point is likely to be fraudulent.
+
+See the histograms below for interesting numerical values to try. Some interesting categories to try include: "shopping_net", "grocery_pos", "entertainment", and "personal_care".
+
+### Option #2: Docker
+
+To be developed - watch this space
+
+### Unit tests
 
 To run unit tests with pytest, run
 
@@ -39,9 +66,9 @@ pytest
 
 The unit tests are run on mocked data as opposed to real data. 
 
-# Explanatory notes
+## Explanatory notes
 
-## Feature selection
+### Feature selection
 
 After exploratory analysis of the data, I chose to incorporate the following existing features:
 
@@ -68,7 +95,7 @@ The numerical features are scaled to zero mean and unit variance, while the cate
 As we are expecting a non-linear decision boundary for some of the features, such as transaction amount (where unusually low OR high amounts can indicate fraud), I decided to use a random forest model. This has the added benefit of being interpretable, as feature importances can be derived (this is based on the average entropy change on splitting using a particular feature).
 
 
-## Handling class imbalance
+### Handling class imbalance
 
 The training set is highly unbalanced. Only around 0.6% of the samples are fraudulent. 
 

@@ -8,6 +8,7 @@ import pandas as pd
 import time
 from typing import Tuple
 from pipeline import Preprocessor
+from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
 from scipy.sparse import csr_matrix
 from imblearn.over_sampling import SMOTE

@@ -5,10 +5,11 @@ import pandas as pd
 from typing import List
 import sklearn.pipeline
 from sklearn.pipeline import Pipeline
-from .pipeline import Preprocessor
+from pipeline import Preprocessor
 from sklearn.ensemble import RandomForestClassifier
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+
 
 model_path = os.path.join('models', 'rf_model_final.pkl')
 preprocessor_path = os.path.join('models', 'preprocessor.pkl')

@@ -44,6 +44,7 @@ def preprocess(df: pd.DataFrame) -> Tuple[csr_matrix, pd.Series]:
     preprocessor = Preprocessor(X)
     X = preprocessor.fit_transform()
     preprocessor_path = os.path.join("models", "preprocessor.pkl")
+    os.makedirs(os.path.dirname(preprocessor_path), exist_ok=True)
     joblib.dump(preprocessor, preprocessor_path)
     print(f"Preprocessor saved in {preprocessor_path}")
 

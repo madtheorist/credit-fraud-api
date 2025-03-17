@@ -6,6 +6,15 @@ The training dataset can be found on Kaggle here: https://www.kaggle.com/dataset
 
 This is a **work in progress**. Currently, a baseline random forest model with sensible default hyperparameters is available. I haven't done extensive hyperparameter tuning yet.
 
+Table of contents:
+  * [Setup](#setup)
+    + [Option #1: Train the model locally](#option--1--train-the-model-locally)
+    + [Option #2: Via docker](#option--2--via-docker)
+    + [Unit tests](#unit-tests)
+  * [Explanatory notes](#explanatory-notes)
+    + [Feature selection](#feature-selection)
+    + [Handling class imbalance](#handling-class-imbalance)
+
 
 ## Setup
 
@@ -52,9 +61,38 @@ indicating that the first data point is likely to be a normal transaction, but t
 
 See the histograms below for interesting numerical values to try. Some interesting categories to try include: "shopping_net", "grocery_pos", "entertainment", and "personal_care".
 
-### Option #2: Docker
 
-To be developed - watch this space
+
+### Option #2: Via docker
+
+Alternatively you can train the model and use the API through docker.
+
+1. Download the above training dataset and place it in the `/data` folder. Make sure it is named `fraudTrain.csv`.
+
+2. Build the docker image:
+
+```
+docker build -t credit-fraud-api .
+```
+
+3. When running the docker container, bind mount the data directory from the host to the container. Note: this will run `entrypoint.sh` which performs model training from within the docker container.
+
+```
+docker run -v $(pwd)/data:/app/data -p 8000:8000 credit-fraud-api
+```
+
+4. Wait until you see the 'Application startup complete' message. In a separate terminal window you can now send a post request to the API with input data in the following format:
+
+```
+curl -X POST "http://127.0.0.1:8000/predict" -H "Content-Type: application/json" -d '[{"amt": 250.5, "hour": 15, "time_since_last_minutes": 120, "category": "shopping_net"}, {"amt": 1000, "hour": 23, "time_since_last_minutes": 60, "category": "shopping_net"}]'
+```
+
+This should give the following response:
+
+```
+{"predictions":[0,1]}
+```
+indicating that the first data point is likely to be a normal transaction, but the second data point is likely to be fraudulent.
 
 ### Unit tests
 

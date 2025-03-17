@@ -8,3 +8,4 @@ scikit-learn==1.6.1
 scipy==1.15.1
 imbalanced-learn==0.13.0
 httpx==0.28.1
+joblib==1.4.2
